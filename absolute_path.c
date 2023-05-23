@@ -35,7 +35,7 @@ char *absolute_path(char **argv, char **envp)
 
 	argv[0] = path_exists(abs_path, path_value, supplied_name);
 	if (argv[0] == NULL)
-		free (abs_path);
+		free(abs_path);
 
 	return (argv[0]);
 }

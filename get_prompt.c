@@ -71,9 +71,7 @@ int main(__attribute__((unused))int ac, char **main_argv, char **envp)
 				wait(&wstatus);
 		}
 		else
-		{
-			printf("%s: 1: %s: not found\n",main_argv[0], command);
-		}
+			printf("%s: 1: %s: not found\n", main_argv[0], command);
 		free(argv[0]);
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "#cisfun$ ", 10);
