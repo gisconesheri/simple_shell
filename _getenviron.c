@@ -3,20 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern char **environ;
 /**
  * _getenviron - gets the value of the environment variable passed in
+ * @name_value: variable of environ to get path of
  * @env_var: the environment variable
- * Returns: the value of env_var (what comes after the =)
+ * @envp: pointer to the environment provided by main
+ * Return: the value of env_var (what comes after the =)
  */
 
-char *_getenviron(char *env_var)
+char *_getenviron(char *name_value, char *env_var, char **envp)
 {
-	char *name = env_var;
-	char *current_var;
-	char variable[100];
+	char *name = env_var, *current_var;
 	unsigned int i, j, k, value_present;
-	char *name_value;
+	char **environ = envp;
 
 	i = j = k = value_present = 0;
 
@@ -24,26 +23,9 @@ char *_getenviron(char *env_var)
 	{
 		current_var = environ[i];
 		j = 0;
-
-		while (current_var[j] != '=')
-			j++;
-
-		/*variable = malloc(sizeof(char) * j);*/
-/*		if (variable == NULL)*/
-/*			return (name_value);*/
-
-		j = 0;
-
-		while (current_var[j] != '=')
-		{
-			variable[j] = current_var[j];
-			j++;
-		}
-
-		j = 0;
 		while (name[j] != '\0')
 		{
-			if (name[j] == variable[j])
+			if (name[j] == current_var[j])
 			{
 				value_present = 1;
 				j++;
@@ -55,15 +37,10 @@ char *_getenviron(char *env_var)
 				break;
 			}
 		}
-
 		k = 0;
 		j++;
 		if (value_present == 1)
 		{
-			name_value = malloc(sizeof(char) * strlen(current_var));
-			if (name_value == NULL)
-				return (name_value);
-
 			while (current_var[j] != '\0')
 			{
 				name_value[k] = current_var[j];
@@ -73,7 +50,6 @@ char *_getenviron(char *env_var)
 			name_value[k] = '\0';
 			break;
 		}
-
 		i++;
 	}
 	return (name_value);

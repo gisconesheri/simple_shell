@@ -2,77 +2,52 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 /**
  * path_exists - builds and absolute path name and
  *  checks if the path for command is valid/exists
+ * @abs_path: pointer to the absolute path
  * @path_value: the PATH value from envrion
  * @command: the command supplied by user
  * Return: the absolute file path containing the command
  * NULL if no path exists
  */
 
-char *path_exists(char *path_value, char *command)
+char *path_exists(char *abs_path, char *path_value, char *command)
 {
 	int len, i, j, path_len;
-	char *temp_path_is, *current_file, *current_path;
-	char *temp_file_path = NULL;
+	char *current_file, *current_path;
 	struct stat file_info;
-	char *temp_path = NULL;
-	char *saveptr = NULL;
+	char *temp_path = NULL, *saveptr = NULL;
 
 	i = j = len = path_len = 0;
-
-	/*create new pointer so as that strtok doesnt intefer with the path*/
-		temp_path_is = malloc(sizeof(char) * strlen(path_value));
-		for (path_len = 0; path_value[path_len]; path_len++)
-			temp_path_is[path_len] = path_value[path_len];
-
-
-		temp_path = temp_path_is;
-
+	temp_path = path_value;
 /*get the first path in PATH out of the path string using strtok_r*/
-		current_path = strtok_r(temp_path, ":", &saveptr);
-		current_file = command;
+	current_path = strtok_r(temp_path, ":", &saveptr);
+	current_file = command;
+	/*iterate thrhough all paths in the the PATH*/
+	while (current_path != NULL)
+	{
+		for (i = 0; current_path[i] != '\0'; i++)
+			abs_path[i] = current_path[i];
 
-		/*iterate thrhough all paths in the the PATH*/
-		while (current_path != NULL)
-		{
-			/*create a string to hold the full path name*/
-			/*DO NOT intefere with current_path*/
-			len = strlen(current_path) + strlen(current_file);
-			temp_file_path = malloc(sizeof(char) * (len + 2));
+		abs_path[i] = '/';
 
-			i = 0;
-			while (current_path[i] != '\0')
-			{
-				temp_file_path[i] = current_path[i];
-				i++;
-			}
-			temp_file_path[i] = '/';
+		/*add the argument supplied to the semi-finished path name*/
+		for (j = 0, i++; current_file[j] != '\0'; i++, j++)
+			abs_path[i] = current_file[j];
 
-			/*add the argument supplied to the semi-finished path name*/
-			j = 0;
-			i++;
-			while (current_file[j] != '\0')
-			{
-				temp_file_path[i] = current_file[j];
-				i++;
-				j++;
-			}
-			temp_file_path[i] = '\0';
+		abs_path[i] = '\0';
 
 /*search if the full path name can be found in the system using STAT()*/
-			if ((stat(temp_file_path, &file_info)) == 0)
-			{
-
-				return (temp_file_path);
-			}
+		if ((stat(abs_path, &file_info)) == 0)
+			return (abs_path);
 /*Move to the next path in PATH, strtok needs NULL pointer after first call*/
-			current_path = strtok_r(NULL, ":", &saveptr);
-			len = 0;
-		}
-	temp_file_path = NULL;
-	return (temp_file_path);
+		current_path = strtok_r(NULL, ":", &saveptr);
+		len = 0;
+	}
+
+		abs_path = NULL;
+		return (abs_path);
 }
