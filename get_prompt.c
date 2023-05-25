@@ -76,6 +76,5 @@ int main(__attribute__((unused))int ac, char **main_argv, char **envp)
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "#cisfun$ ", 10);
 	}
-	free(command);
 	return (EXIT_SUCCESS);
 }
